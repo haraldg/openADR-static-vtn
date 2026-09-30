@@ -1,0 +1,12 @@
+# Python cache
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local input data
+*.csv
+
+*.swp
+*.swo
+*~
