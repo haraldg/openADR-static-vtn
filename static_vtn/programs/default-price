@@ -1,0 +1,25 @@
+{
+  "id": "default-price",
+  "objectType": "PROGRAM",
+  "createdDateTime": "2026-01-01T00:00:00Z",
+  "modificationDateTime": "2026-01-01T00:00:00Z",
+  "programName": "default-price",
+  "payloadDescriptors": [
+    {
+      "objectType": "EVENT_PAYLOAD_DESCRIPTOR",
+      "payloadType": "PRICE",
+      "units": "KWH",
+      "currency": "EUR"
+    }
+  ],
+  "attributes": [
+    {
+      "type": "BINDING_EVENTS",
+      "values": [true]
+    },
+    {
+      "type": "LOCAL",
+      "values": [true]
+    }
+  ]
+}

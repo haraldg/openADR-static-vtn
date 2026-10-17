@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+"""Generates a static 'index.json' file from JSON objects in a directory,
+so that serving the file via a simple HTTP server returns an openADR 3.1
+compatible array of these objects.
+"""
+
+import json
+import sys
+from pathlib import Path
+
+def process_dir(dir):
+	"""
+	Read all files in 'dir' and return them as list of JSON objects.
+	"""
+
+	results = []
+
+	for filename in dir.iterdir():
+		try:
+			if filename.name != 'index.json':
+				results.append(json.load(filename.open()))
+		except:
+			pass	# Ignore any files that are not valid JSON
+
+	return results
+
+
+def main(dir):
+	output = dir.joinpath('index.json')
+	output.write_text(json.dumps(process_dir(dir), indent=2) + "\n", encoding="utf-8")
+
+	return 0
+
+if __name__ == "__main__":
+	if len(sys.argv) == 2:
+		main(Path(sys.argv[1]))
+	else:
+		print("Usage: generate_index <path_to_dir>\n")
+		print(__doc__)
