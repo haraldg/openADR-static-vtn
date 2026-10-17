@@ -30,6 +30,7 @@ that a JSON object be returned instead of HTML for 404 errors.
 ├── README.md
 ├── csv2event.py             # The core module and executable
 ├── generate_index           # Program to generate proper 'index.json' files
+├── httpd/                   # Files supporting the proper configuration of HTTP servers
 └── static_vtn/              # The static metadata files in a proper folder structure
     └── programs/
         └── default-price    # Example file copy/edit for your use case
@@ -66,7 +67,55 @@ for writing generators:
 
 ## Deployment
 
-Simply serve the `static_vtn/` directory from any HTTP server.
+Serve the `static_vtn/` directory from any HTTP server.
+
+### lighttpd
+For a simple setup without virtual hosts:
+* Edit `/etc/lighttpd/lighttpd.conf` and set `server.document-root`
+  to the proper directory.
+* Copy `httpd/lighttpd.conf` to `/etc/lighttpd/conf-enabled/99_openADR.conf`,
+  then edit it to replace `PATH_TO_REPO` with the actual path to the
+  repository on your system.
+
+**Optional:** To comply with the specification, you need to set up TLS
+certificates. However, many VENs and the API check below work fine over
+unencrypted HTTP.
+
+
+## Testing your setup
+Setting up the VTN as described above involves editing files by hand, and
+mistakes are easy to make, especially in the `program` objects. It's therefore
+a good idea to run an end-to-end check.
+
+Requirements:
+
+* The [OpenADR spec](https://www.openadr.org/specification) as a YAML file.
+  If you'd rather not register, there is a
+  [copy on GitHub](https://github.com/grid-coordination/openadr3-specification).
+* [`schemathesis`](https://schemathesis.readthedocs.io/), installed on a
+  machine that can reach your server over HTTP. Many distributions don't
+  package it, so you will probably need a tool like `pip` to install it.
+
+Run the tests with a command like this:
+
+```bash
+schemathesis run ../openADR/1_OpenADR_3.1.0_20250801.yaml \
+  --url http://localhost/ \
+  --include-method GET \
+  --exclude-method TRACE \
+  --exclude-checks unsupported_method
+```
+
+You might see some errors that are unavoidable with your HTTP server, or
+with a static setup in general. You can safely ignore these.
+
+You will also very likely see errors saying that unauthenticated access is
+not allowed. These appear to be errors in the specification, since other
+OpenADR documents explicitly describe this use case.
+
+If you find errors caused by files (or missing files) from
+this repository, feel free to open an
+[issue or pull request on GitHub](https://github.com/haraldg/openADR-static-vtn/).
 
 
 ## Compatibility tested with:
@@ -79,8 +128,9 @@ Simply serve the `static_vtn/` directory from any HTTP server.
 
 ## References
 
+- [Project page](https://github.com/haraldg/openADR-static-vtn/)
 - [OpenADR Alliance](https://www.openadr.org/)
-- [openADR 3.0 Specification](https://www.openadr.org/openADR-30-Specification) - Also
+- [OpenADR 3.1 Specification](https://www.openadr.org/specification) - Also
   accessible without registration at
   [grid-coordination](https://github.com/grid-coordination/openadr3-specification).
 
