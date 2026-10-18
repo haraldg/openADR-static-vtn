@@ -96,6 +96,15 @@ Requirements:
   machine that can reach your server over HTTP. Many distributions don't
   package it, so you will probably need a tool like `pip` to install it.
 
+Mark endpoints that are required but useless for non-authenticating
+setups as forbidden:
+
+```bash
+cd static_vtn/
+mkdir reports resources subscriptions vens
+chmod a-rwx reports resources subscriptions vens
+```
+
 Run the tests with a command like this:
 
 ```bash
